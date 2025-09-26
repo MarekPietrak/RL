@@ -2,7 +2,8 @@ import gymnasium as gym
 import time
 from stable_baselines3 import DQN
 
-env = gym.make("CartPole-v1", render_mode="human")
+
+env = gym.make("CartPole-v1")
 model = DQN("MlpPolicy", env, verbose=1)
 model.learn(total_timesteps=50000)
 
@@ -22,3 +23,4 @@ while True:
 
 print("Episode reward:", total_reward)
 env.close()
+

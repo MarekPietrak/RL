@@ -13,40 +13,40 @@ def make_env():
     return Monitor(gym.make(env_id))
 
 env = DummyVecEnv([make_env])
-env = VecNormalize(env, norm_obs=True, norm_reward=True, clip_obs=10.0)  # NEW
+env = VecNormalize(env, norm_obs=True, norm_reward=True, clip_obs=10.0)
 
 model = PPO(
     "MlpPolicy",
     env,
-    learning_rate=1.5e-4,          # lower LR → more stable updates
-    n_steps=4096,                  # bigger rollout buffer
-    batch_size=256,                # larger batch for stabler gradients
-    gamma=0.999,                   # slightly longer horizon
-    gae_lambda=0.95,               # standard
-    n_epochs=10,                   # default good for PPO
-    clip_range=0.2,                # standard
-    ent_coef=0.01,                 # encourage exploration
-    target_kl=0.02,                # prevent unstable updates
-    policy_kwargs=dict(net_arch=[256, 256]),  # bigger network capacity
+    learning_rate=1.5e-4,
+    n_steps=4096,
+    batch_size=256,
+    gamma=0.999,
+    gae_lambda=0.95,
+    n_epochs=10,
+    clip_range=0.2,
+    ent_coef=0.01,
+    target_kl=0.02,
+    policy_kwargs=dict(net_arch=[256, 256]),
     verbose=1,
 )
 
 eval_env = DummyVecEnv([make_env])
-eval_env = VecNormalize(eval_env, training=False, norm_obs=True, norm_reward=True, clip_obs=10.0)  # NEW
+eval_env = VecNormalize(eval_env, training=False, norm_obs=True, norm_reward=True, clip_obs=10.0)
 
 eval_cb = EvalCallback(
     eval_env,
     best_model_save_path=logdir,
     log_path=logdir,
     eval_freq=10_000,
-    n_eval_episodes=20,            # optional: reduce variance
+    n_eval_episodes=20,
     deterministic=True,
     render=False
 )
 
 model.learn(total_timesteps=1000000, callback=eval_cb)
 
-# --- Add video of the episode ---
+#add video
 from gymnasium.wrappers import RecordVideo
 
 video_dir = os.path.join(logdir, "videos")
